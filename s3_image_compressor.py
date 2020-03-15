@@ -48,9 +48,10 @@ def upload_file(client, key, filename):
         new_key
     )
 
-def remove_file(filename):
+def remove_file(client, key, filename):
     os.remove(filename)
     os.remove("min-"+filename)
+    client.delete_object(Bucket=Bucket, Key=key)
 
 def process_files(key):
     client = s3_client()
@@ -59,7 +60,7 @@ def process_files(key):
         download_object(client, key, filename)
         compress_image(filename)
         upload_file(client, key, filename)
-        remove_file(filename)
+        remove_file(client, key, filename)
     except Exception as e:
         print(e)
         print("Error for the file: "+key)
